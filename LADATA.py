@@ -1,46 +1,59 @@
+# Importação das bibliotecas utilizadas 
 import serial as ard
 import pandas as pd
 import time
 
-arduino = ard.Serial('COM9', 9600)
 
-a = 0
-b = 0
-c = 0
-lista1 = []
-lista2 = []
-lista3 = []
-
-while a < 50:
-    
+# Função que lê o valor relativo ao sensor pelo Serial
+def read_data(lista):
+    global arduino
     dados_teste1 = arduino.readline().decode('utf-8').strip()
     print(f"Dado recebido {dados_teste1}")
-    lista1.append(dados_teste1)
-    a += 1
+    lista.append(dados_teste1)
 
-print("Adicionar água")
-time.sleep(50)
-arduino.flushInput()
+# Função que espera a adição de mais água no recipiente 
+def wait_water():
+    global contador
+    print("Adicionar água")
+    time.sleep(50)
+    arduino.flushInput()
+    contador = 1
 
-while b < 50:
-    
-    dados_teste2 = arduino.readline().decode('utf-8').strip()
-    print(f"Dado recebido {dados_teste2}")
-    lista2.append(dados_teste2)
-    b += 1
 
-print("Adicionar água")
-time.sleep(50)
-arduino.flushInput()
+# Conecta ao serial pela porta utilizada pelo arduino
+arduino = ard.Serial('COM9', 9600) # Alterar para o relativo ao seu computador
 
-while c < 50:
-    
-    dados_teste3 = arduino.readline().decode('utf-8').strip()
-    print(f"Dado recebido {dados_teste3}")
-    lista3.append(dados_teste3)
-    c += 1
+contador = 1 # contador para controlar o número de leituras
+MAX_VALUE = 50 # número máximo de leituras dos dados
+# listas que armazenarão os valores lidos, relativos para cada volume de água
+lista50ml = []
+lista100ml = []
+lista150ml = []
 
-df = pd.DataFrame({'Teste 50ml': lista1, 'Teste 100ml': lista2, 'Teste 150ml': lista3})
+# Leitura de dados, com o volume de 50mL
+while contador <= MAX_VALUE:    
+    read_data(lista50ml)
+    contador += 1
+
+# Espera a mudança do volume de água
+wait_water()
+
+# Leitura de dados, com o volume de 100mL
+while contador <= MAX_VALUE:
+    read_data(lista100ml)
+    contador += 1
+
+# Espera a mudança do volume de água
+wait_water()
+
+# Leitura de dados, com o volume de 150mL
+while contador <= MAX_VALUE:
+    read_data(lista150ml)
+    contador += 1
+
+# Cria o dataframe utilizando as listas, para que possamos analisar esses dados
+df = pd.DataFrame({'Teste 50ml': lista50ml, 'Teste 100ml': lista100ml, 'Teste 150ml': lista150ml})
+# Exporta para csv o arquivo gerado com os dados
 df.to_csv('dados_arduino.csv', index=False)
 
 print(df)
