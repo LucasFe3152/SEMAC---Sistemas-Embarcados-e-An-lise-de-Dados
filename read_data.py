@@ -14,12 +14,12 @@ def read_data(temperatura, umidade):
     temperatura.append(dados_temperatura)
 
 # Função que espera a adição de mais água no recipiente 
-def wait_water():
-    global contador
-    print("Adicionar água")
-    time.sleep(50)
-    arduino.flushInput()
-    contador = 1
+# def wait_water():
+#     global contador
+#     print("Adicionar água")
+#     time.sleep(50)
+#     arduino.flushInput()
+#     contador = 1
 
 
 # Conecta ao serial pela porta utilizada pelo arduino
@@ -33,7 +33,7 @@ lista_umidade = []
 
 # Leitura de dados, com o volume de 50mL
 while contador <= MAX_VALUE:    
-    read_data(lista50ml)
+    read_data(lista_temperatura, lista_umidade)
     contador += 1
 
 # Cria o dataframe utilizando as listas, para que possamos analisar esses dados
