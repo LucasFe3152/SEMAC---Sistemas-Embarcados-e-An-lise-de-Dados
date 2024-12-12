@@ -7,19 +7,12 @@ import time
 # Função que lê o valor relativo ao sensor pelo Serial
 def read_data(temperatura, umidade):
     global arduino
-    dados_umidade = arduino.readline().decode('utf-8').strip()
-    dados_temperatura = arduino.readline().decode('utf-8').strip()
+    dados = arduino.readline().decode('utf-8').strip().split(',')
+    dados_umidade = dados[0]
+    dados_temperatura = dados[1]
     print(f"Dados recebidos: {dados_umidade}, {dados_temperatura}")
     umidade.append(dados_umidade)
     temperatura.append(dados_temperatura)
-
-# Função que espera a adição de mais água no recipiente 
-# def wait_water():
-#     global contador
-#     print("Adicionar água")
-#     time.sleep(50)
-#     arduino.flushInput()
-#     contador = 1
 
 
 # Conecta ao serial pela porta utilizada pelo arduino
